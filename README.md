@@ -2,6 +2,8 @@
 
 CircleCI Orb for managing dependencies like Ruby gems and JS packages.
 
+Published at https://circleci.com/orbs/registry/orb/valimail/dependency-manager
+
 ## Development
 
 Work on files in the `src` directory and when you're ready you can "pack",
