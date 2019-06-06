@@ -1,0 +1,98 @@
+commands:
+  install-gems:
+    description: |
+      Restore, install, and cache Ruby gems
+    parameters:
+      bundle-path:
+        default: vendor/bundle
+        description: Path to store gems bundle
+        type: string
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+      install-gems:
+        default: true
+        type: boolean
+      restore-cache:
+        default: true
+        type: boolean
+      save-cache:
+        default: true
+        type: boolean
+    steps:
+    - when:
+        condition: << parameters.restore-cache >>
+        steps:
+        - restore_cache:
+            keys:
+            - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
+              }}
+            - << parameters.cache-version >>-gems-{{ .Branch }}
+            - << parameters.cache-version >>-gems-master
+            - << parameters.cache-version >>-gems
+    - when:
+        condition: << parameters.install-gems >>
+        steps:
+        - run:
+            command: bundle check --path=$BUNDLE_PATH || bundle install --path=$BUNDLE_PATH
+              --jobs=4 --retry=3
+            name: Install gems
+    - when:
+        condition: << parameters.save-cache >>
+        steps:
+        - save_cache:
+            key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
+              }}
+            paths:
+            - << parameters.bundle-path >>
+  install-packages:
+    description: |
+      Restore, install, and cache JS packages using Yarn
+    parameters:
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+      install-packages:
+        default: true
+        type: boolean
+      node-modules-path:
+        default: node_modules
+        description: Path to store packages
+        type: string
+      restore-cache:
+        default: true
+        type: boolean
+      save-cache:
+        default: true
+        type: boolean
+    steps:
+    - when:
+        condition: << parameters.restore-cache >>
+        steps:
+        - restore_cache:
+            keys:
+            - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
+              }}
+            - << parameters.cache-version >>-packages-{{ .Branch }}
+            - << parameters.cache-version >>-packages-master
+            - << parameters.cache-version >>-packages
+    - when:
+        condition: << parameters.install-packages >>
+        steps:
+        - run:
+            command: yarn
+            name: Install node packages
+    - when:
+        condition: << parameters.save-cache >>
+        steps:
+        - save_cache:
+            key: << parameters.cache-version>>-packages-{{ .Branch }}-{{ checksum
+              "yarn.lock" }}
+            paths:
+            - << parameters.node-modules-path >>
+description: |
+  Restore, install, and cache dependencies like Ruby gems and JS packages.
+version: 2.1
+
