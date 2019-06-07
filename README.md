@@ -1,4 +1,4 @@
-# valimail/dependency-manager Orb
+# valimail/dependency-manager - CircleCI Orb
 
 CircleCI Orb for managing dependencies like Ruby gems and JS packages.
 
