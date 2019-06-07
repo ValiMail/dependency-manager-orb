@@ -1,0 +1,18 @@
+description: >
+  Install dependencies using the default cache-version ("v1").
+
+usage:
+  version: 2.1
+
+  orbs:
+    dependency-manager: valimail/dependency-manager@0.1.2
+
+  jobs:
+    setup-job:
+      executor:
+        name: ruby-system
+      steps:
+        - checkout
+        - install_required_software
+        - dependency-manager/install-gems
+        - dependency-manager/install-packages
