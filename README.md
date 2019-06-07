@@ -17,7 +17,7 @@ circleci config pack src > orb.yml
 circleci orb validate orb.yml
 
 # Increment ORB_VERSION (below) and publish orb.yml
-ORB_VERSION=0.1.1
+ORB_VERSION=0.1.2
 circleci orb publish orb.yml valimail/dependency-manager@$ORB_VERSION
 ```
 

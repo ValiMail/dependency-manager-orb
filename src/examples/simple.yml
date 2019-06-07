@@ -1,0 +1,20 @@
+description: >
+  Install dependencies, explicitly setting the cache-version parameter (recommended).
+
+usage:
+  version: 2.1
+
+  orbs:
+    dependency-manager: valimail/dependency-manager@0.1.2
+
+  jobs:
+    setup-job:
+      executor:
+        name: ruby-system
+      steps:
+        - checkout
+        - install_required_software
+        - dependency-manager/install-gems:
+            cache-version: v3
+        - dependency-manager/install-packages:
+            cache-version: v2

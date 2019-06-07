@@ -95,9 +95,25 @@ commands:
 description: |
   Restore, install, and cache dependencies like Ruby gems and JS packages.
 examples:
+  default:
+    description: |
+      Install dependencies using the default cache-version ("v1").
+    usage:
+      jobs:
+        setup-job:
+          executor:
+            name: ruby-system
+          steps:
+          - checkout
+          - install_required_software
+          - dependency-manager/install-gems
+          - dependency-manager/install-packages
+      orbs:
+        dependency-manager: valimail/dependency-manager@0.1.2
+      version: 2.1
   simple:
     description: |
-      Install dependencies, while only setting the cache-version parameter (recommended).
+      Install dependencies, explicitly setting the cache-version parameter (recommended).
     usage:
       jobs:
         setup-job:
@@ -111,7 +127,7 @@ examples:
           - dependency-manager/install-packages:
               cache-version: v2
       orbs:
-        dependency-manager: valimail/dependency-manager@0.1.0
+        dependency-manager: valimail/dependency-manager@0.1.2
       version: 2.1
 version: 2.1
 
