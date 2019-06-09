@@ -20,6 +20,10 @@ parameters:
     type: boolean
     default: true
 
+  clean-bundle:
+    type: boolean
+    default: true
+
   save-cache:
     type: boolean
     default: true
@@ -41,6 +45,13 @@ steps:
         - run:
             name: Install gems
             command: bundle check --path=$BUNDLE_PATH || bundle install --path=$BUNDLE_PATH --jobs=4 --retry=3
+
+  - when:
+      condition: << parameters.clean-bundle >>
+      steps:
+        - run:
+            name: Clean bundle
+            command: bundle exec bundle clean
 
   - when:
       condition: << parameters.save-cache >>
