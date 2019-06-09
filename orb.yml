@@ -11,6 +11,9 @@ commands:
         default: v1
         description: Version prefix to use in cache key
         type: string
+      clean-bundle:
+        default: true
+        type: boolean
       install-gems:
         default: true
         type: boolean
@@ -38,6 +41,12 @@ commands:
             command: bundle check --path=$BUNDLE_PATH || bundle install --path=$BUNDLE_PATH
               --jobs=4 --retry=3
             name: Install gems
+    - when:
+        condition: << parameters.clean-bundle >>
+        steps:
+        - run:
+            command: bundle exec bundle clean
+            name: Remove old gems
     - when:
         condition: << parameters.save-cache >>
         steps:
