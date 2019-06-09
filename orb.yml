@@ -46,7 +46,7 @@ commands:
         steps:
         - run:
             command: bundle exec bundle clean
-            name: Clean bundle
+            name: Remove old gems
     - when:
         condition: << parameters.save-cache >>
         steps:
