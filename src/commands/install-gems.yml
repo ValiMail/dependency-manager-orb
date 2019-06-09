@@ -50,7 +50,7 @@ steps:
       condition: << parameters.clean-bundle >>
       steps:
         - run:
-            name: Clean bundle
+            name: Remove old gems
             command: bundle exec bundle clean
 
   - when:
