@@ -1,0 +1,41 @@
+version: 2.1
+
+aliases:
+  - &bundle_path
+    vendor/bundle
+  - &working_path
+    ~/dependency-manager-orb
+
+orbs:
+  dependency-manager: valimail/dependency-manager@0.2.0
+
+executors:
+  ruby-node:
+    docker:
+      - image: circleci/ruby:2.6.2-stretch-node-browsers
+        environment:
+          BUNDLE_PATH: *bundle_path
+          BUNDLER_VERSION: 2.0.1
+          RAILS_ENV: test
+          RACK_ENV: test
+  working_directory: *working_path
+
+jobs:
+  test-job:
+    executor: ruby-node
+    steps:
+      - checkout
+      - run:
+          name: Set up test files
+          command: |
+            mv tests/files/Gemfile.example Gemfile
+            mv tests/files/Gemfile.lock.example Gemfile.lock
+            mv tests/files/package.json.example package.json
+            mv tests/files/yarn.lock.example yarn.lock
+      - dependency-manager/install-gems
+      - dependency-manager/install-packages
+
+workflows:
+  build:
+    jobs:
+      - test-job
