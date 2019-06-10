@@ -224,6 +224,5 @@ examples:
       orbs:
         dependency-manager: valimail/dependency-manager@0.1.2
       version: 2.1
-jobs: {}
 version: 2.1
 
