@@ -1,5 +1,7 @@
 # valimail/dependency-manager - CircleCI Orb
 
+[![CircleCI](https://circleci.com/gh/ValiMail/dependency-manager-orb.svg?style=svg&circle-token=540455df00def7479a3c81c9ab9ac8ab4f810178)](https://circleci.com/gh/ValiMail/dependency-manager-orb)
+
 CircleCI Orb for managing dependencies like Ruby gems and JS packages.
 
 Published at https://circleci.com/orbs/registry/orb/valimail/dependency-manager
@@ -16,7 +18,8 @@ circleci config pack src > orb.yml
 # Validate orb.yml
 circleci orb validate orb.yml
 
-# Increment ORB_VERSION (below) and publish orb.yml
+# Increment ORB_VERSION (below) and publish orb.yml. 
+# Note: only GitHub admins of ValiMail can do this currently.
 ORB_VERSION=0.2.0
 circleci orb publish orb.yml valimail/dependency-manager@$ORB_VERSION
 
