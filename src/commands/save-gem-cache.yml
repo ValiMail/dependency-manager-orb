@@ -1,0 +1,20 @@
+description: >
+  Saves installed bundle and cached rubygems to persistent cache
+
+parameters:
+  bundle-path:
+    description: Path to store gems bundle
+    type: string
+    default: vendor/bundle
+
+  cache-version:
+    description: Version prefix to use in cache key
+    type: string
+    default: v1
+
+steps:
+  - save_cache:
+      key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+      paths:
+        - << parameters.bundle-path >>
+        - vendor/cache

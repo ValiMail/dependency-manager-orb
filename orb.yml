@@ -1,4 +1,23 @@
 commands:
+  bundle-gems:
+    description: |
+      Creates cache of rubygems in vendor/cache folder and installs gems to BUNDLE_PATH afterwards
+    parameters:
+      bundle-path:
+        default: vendor/bundle
+        description: Path to store gems bundle
+        type: string
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+    steps:
+    - run:
+        command: |
+          export BUNDLE_JOBS=4
+          export BUNDLE_PATH=<< parameters.bundle-path >>
+          bundle lock && bundle package --all
+        name: Install gems
   install-gems:
     description: |
       Restore, install, and cache Ruby gems
@@ -27,20 +46,14 @@ commands:
     - when:
         condition: << parameters.restore-cache >>
         steps:
-        - restore_cache:
-            keys:
-            - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
-              }}
-            - << parameters.cache-version >>-gems-{{ .Branch }}
-            - << parameters.cache-version >>-gems-master
-            - << parameters.cache-version >>-gems
+        - restore-gem-cache:
+            cache-version: << parameters.cache-version >>
     - when:
         condition: << parameters.install-gems >>
         steps:
-        - run:
-            command: bundle check --path=$BUNDLE_PATH || bundle install --path=$BUNDLE_PATH
-              --jobs=4 --retry=3
-            name: Install gems
+        - update-bundler
+        - bundle-gems:
+            bundle-path: << parameters.bundle-path >>
     - when:
         condition: << parameters.clean-bundle >>
         steps:
@@ -50,11 +63,8 @@ commands:
     - when:
         condition: << parameters.save-cache >>
         steps:
-        - save_cache:
-            key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
-              }}
-            paths:
-            - << parameters.bundle-path >>
+        - save-gem-cache:
+            cache-version: << parameters.cache-version >>
   install-packages:
     description: |
       Restore, install, and cache JS packages using Yarn
@@ -80,13 +90,8 @@ commands:
     - when:
         condition: << parameters.restore-cache >>
         steps:
-        - restore_cache:
-            keys:
-            - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
-              }}
-            - << parameters.cache-version >>-packages-{{ .Branch }}
-            - << parameters.cache-version >>-packages-master
-            - << parameters.cache-version >>-packages
+        - restore-node-cache:
+            cache-version: << parameters.cache-version >>
     - when:
         condition: << parameters.install-packages >>
         steps:
@@ -96,11 +101,92 @@ commands:
     - when:
         condition: << parameters.save-cache >>
         steps:
-        - save_cache:
-            key: << parameters.cache-version>>-packages-{{ .Branch }}-{{ checksum
-              "yarn.lock" }}
-            paths:
-            - << parameters.node-modules-path >>
+        - save-node-cache:
+            cache-version: << parameters.cache-version >>
+  restore-gem-cache:
+    description: |
+      Tries to restore cached gems from several different cache-keys
+    parameters:
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+    steps:
+    - restore_cache:
+        keys:
+        - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
+          }}
+        - << parameters.cache-version >>-gems-{{ .Branch }}
+        - << parameters.cache-version >>-gems-master
+        - << parameters.cache-version >>-gems
+  restore-node-cache:
+    description: |
+      Tries to restore cached node packages from several different cache-keys
+    parameters:
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+    steps:
+    - restore_cache:
+        keys:
+        - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
+          }}
+        - << parameters.cache-version >>-packages-{{ .Branch }}
+        - << parameters.cache-version >>-packages-master
+        - << parameters.cache-version >>-packages
+  save-gem-cache:
+    description: |
+      Saves installed bundle and cached rubygems to persistent cache
+    parameters:
+      bundle-path:
+        default: vendor/bundle
+        description: Path to store gems bundle
+        type: string
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+    steps:
+    - save_cache:
+        key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
+          }}
+        paths:
+        - << parameters.bundle-path >>
+        - vendor/cache
+  save-node-cache:
+    description: |
+      Saves installed node packages to persistent cache
+    parameters:
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+      node-modules-path:
+        default: node_modules
+        description: Path to store packages
+        type: string
+    steps:
+    - save_cache:
+        key: << parameters.cache-version>>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
+          }}
+        paths:
+        - << parameters.node-modules-path >>
+  update-bundler:
+    description: |
+      Update rubygems and bundler
+    parameters:
+      bundler-version:
+        default: 2.0.1
+        description: Which version of bundler to target for install
+        type: string
+    steps:
+    - run:
+        command: |
+          export BUNDLER_VERSION=<< parameters.bundler-version >>
+          sudo gem update --system
+          sudo sh -c 'yes | gem update --force bundler'
+        name: Update bundler
 description: |
   Restore, install, and cache dependencies like Ruby gems and JS packages.
 examples:
@@ -138,5 +224,6 @@ examples:
       orbs:
         dependency-manager: valimail/dependency-manager@0.1.2
       version: 2.1
+jobs: {}
 version: 2.1
 

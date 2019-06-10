@@ -2,15 +2,15 @@ description: >
   Restore, install, and cache Ruby gems
 
 parameters:
-  cache-version:
-    description: Version prefix to use in cache key
-    type: string
-    default: v1
-
   bundle-path:
     description: Path to store gems bundle
     type: string
     default: vendor/bundle
+
+  cache-version:
+    description: Version prefix to use in cache key
+    type: string
+    default: v1
 
   restore-cache:
     type: boolean
@@ -32,19 +32,15 @@ steps:
   - when:
       condition: << parameters.restore-cache >>
       steps:
-        - restore_cache:
-            keys:
-              - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-              - << parameters.cache-version >>-gems-{{ .Branch }}
-              - << parameters.cache-version >>-gems-master
-              - << parameters.cache-version >>-gems
+        - restore-gem-cache:
+            cache-version: << parameters.cache-version >>
 
   - when:
       condition: << parameters.install-gems >>
       steps:
-        - run:
-            name: Install gems
-            command: bundle check --path=$BUNDLE_PATH || bundle install --path=$BUNDLE_PATH --jobs=4 --retry=3
+        - update-bundler
+        - bundle-gems:
+            bundle-path: << parameters.bundle-path >>
 
   - when:
       condition: << parameters.clean-bundle >>
@@ -56,7 +52,6 @@ steps:
   - when:
       condition: << parameters.save-cache >>
       steps:
-        - save_cache:
-            key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            paths:
-              - << parameters.bundle-path >>
+        - save-gem-cache:
+            cache-version: << parameters.cache-version >>
+
