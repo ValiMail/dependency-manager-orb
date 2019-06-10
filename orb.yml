@@ -181,10 +181,12 @@ commands:
         description: Which version of bundler to target for install
         type: string
     steps:
-    - run: |
-        export BUNDLER_VERSION=<< parameters.bundler-version >>
-        sudo gem update --system
-        sudo sh -c 'yes | gem update --force bundler'
+    - run:
+        command: |
+          export BUNDLER_VERSION=<< parameters.bundler-version >>
+          sudo gem update --system
+          sudo sh -c 'yes | gem update --force bundler'
+        name: Update bundler
 description: |
   Restore, install, and cache dependencies like Ruby gems and JS packages.
 examples:
@@ -222,12 +224,6 @@ examples:
       orbs:
         dependency-manager: valimail/dependency-manager@0.1.2
       version: 2.1
-executors:
-  ruby-system:
-    docker:
-    - environment:
-        BUNDLER_VERSION: 2.0.1
-      image: circleci/ruby:2.6.2-stretch
 jobs: {}
 version: 2.1
 
