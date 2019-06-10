@@ -1,0 +1,16 @@
+description: >
+  Tries to restore cached gems from several different cache-keys
+
+parameters:
+  cache-version:
+    description: Version prefix to use in cache key
+    type: string
+    default: v1
+
+steps:
+  - restore_cache:
+      keys:
+        - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+        - << parameters.cache-version >>-gems-{{ .Branch }}
+        - << parameters.cache-version >>-gems-master
+        - << parameters.cache-version >>-gems
