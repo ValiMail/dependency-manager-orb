@@ -1,141 +1,18 @@
 commands:
   bundle-gems:
     description: |
-      Creates cache of rubygems in vendor/cache folder and installs gems to BUNDLE_PATH afterwards
+      Verifies dependencies are met by installed gems or installs gems
     parameters:
       bundle-path:
         default: vendor/bundle
         description: Path to store gems bundle
-        type: string
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
         type: string
     steps:
     - run:
         command: |
-          export BUNDLE_JOBS=4
-          export BUNDLE_PATH=<< parameters.bundle-path >>
-          bundle lock && bundle package --all
+          bundle check --path=<< parameters.bundle-path >> || bundle install --path=<< parameters.bundle-path >> --jobs=4 --retry=3
         name: Install gems
-  install-gems:
-    description: |
-      Restore, install, and cache Ruby gems
-    parameters:
-      bundle-path:
-        default: vendor/bundle
-        description: Path to store gems bundle
-        type: string
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-      clean-bundle:
-        default: true
-        type: boolean
-      install-gems:
-        default: true
-        type: boolean
-      restore-cache:
-        default: true
-        type: boolean
-      save-cache:
-        default: true
-        type: boolean
-    steps:
-    - when:
-        condition: << parameters.restore-cache >>
-        steps:
-        - restore-gem-cache:
-            cache-version: << parameters.cache-version >>
-    - when:
-        condition: << parameters.install-gems >>
-        steps:
-        - update-bundler
-        - bundle-gems:
-            bundle-path: << parameters.bundle-path >>
-    - when:
-        condition: << parameters.clean-bundle >>
-        steps:
-        - run:
-            command: bundle exec bundle clean
-            name: Remove old gems
-    - when:
-        condition: << parameters.save-cache >>
-        steps:
-        - save-gem-cache:
-            cache-version: << parameters.cache-version >>
-  install-packages:
-    description: |
-      Restore, install, and cache JS packages using Yarn
-    parameters:
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-      install-packages:
-        default: true
-        type: boolean
-      node-modules-path:
-        default: node_modules
-        description: Path to store packages
-        type: string
-      restore-cache:
-        default: true
-        type: boolean
-      save-cache:
-        default: true
-        type: boolean
-    steps:
-    - when:
-        condition: << parameters.restore-cache >>
-        steps:
-        - restore-node-cache:
-            cache-version: << parameters.cache-version >>
-    - when:
-        condition: << parameters.install-packages >>
-        steps:
-        - run:
-            command: yarn
-            name: Install node packages
-    - when:
-        condition: << parameters.save-cache >>
-        steps:
-        - save-node-cache:
-            cache-version: << parameters.cache-version >>
-  restore-gem-cache:
-    description: |
-      Tries to restore cached gems from several different cache-keys
-    parameters:
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-    steps:
-    - restore_cache:
-        keys:
-        - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
-          }}
-        - << parameters.cache-version >>-gems-{{ .Branch }}
-        - << parameters.cache-version >>-gems-master
-        - << parameters.cache-version >>-gems
-  restore-node-cache:
-    description: |
-      Tries to restore cached node packages from several different cache-keys
-    parameters:
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-    steps:
-    - restore_cache:
-        keys:
-        - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
-          }}
-        - << parameters.cache-version >>-packages-{{ .Branch }}
-        - << parameters.cache-version >>-packages-master
-        - << parameters.cache-version >>-packages
-  save-gem-cache:
+  cache-gems:
     description: |
       Saves installed bundle and cached rubygems to persistent cache
     parameters:
@@ -154,7 +31,7 @@ commands:
         paths:
         - << parameters.bundle-path >>
         - vendor/cache
-  save-node-cache:
+  cache-packages:
     description: |
       Saves installed node packages to persistent cache
     parameters:
@@ -172,6 +49,137 @@ commands:
           }}
         paths:
         - << parameters.node-modules-path >>
+  clean-gems:
+    description: |
+      Cleanup old gems so they are not cached
+    steps:
+    - run:
+        command: bundle exec bundle clean
+        name: Remove old gems
+  install-gems:
+    description: |
+      Restore, install, and cache Ruby gems
+    parameters:
+      bundle-gems:
+        default: true
+        type: boolean
+      bundle-path:
+        default: vendor/bundle
+        description: Path to store gems bundle
+        type: string
+      bundler-version:
+        default: 2.0.1
+        description: Which version of bundler to target for install
+        type: string
+      cache-gems:
+        default: true
+        type: boolean
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+      clean-gems:
+        default: true
+        type: boolean
+      restore-gems:
+        default: true
+        type: boolean
+      update-bundler:
+        default: true
+        type: boolean
+    steps:
+    - when:
+        condition: << parameters.update-bundler >>
+        steps:
+        - update-bundler:
+            bundler-version: << parameters.bundler-version >>
+    - when:
+        condition: << parameters.restore-gems >>
+        steps:
+        - restore-gems:
+            cache-version: << parameters.cache-version >>
+    - when:
+        condition: << parameters.bundle-gems >>
+        steps:
+        - bundle-gems:
+            bundle-path: << parameters.bundle-path >>
+    - when:
+        condition: << parameters.clean-gems >>
+        steps:
+        - clean-gems
+    - when:
+        condition: << parameters.cache-gems >>
+        steps:
+        - cache-gems:
+            cache-version: << parameters.cache-version >>
+  install-packages:
+    description: |
+      Restore, install, and cache JS packages using Yarn
+    parameters:
+      cache-packages:
+        default: true
+        type: boolean
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+      node-modules-path:
+        default: node_modules
+        description: Path to store packages
+        type: string
+      restore-packages:
+        default: true
+        type: boolean
+      yarn-install:
+        default: true
+        type: boolean
+    steps:
+    - when:
+        condition: << parameters.restore-packages >>
+        steps:
+        - restore-packages:
+            cache-version: << parameters.cache-version >>
+    - when:
+        condition: << parameters.yarn-install >>
+        steps:
+        - run:
+            command: yarn
+            name: Install node packages
+    - when:
+        condition: << parameters.cache-packages >>
+        steps:
+        - cache-packages:
+            cache-version: << parameters.cache-version >>
+  restore-gems:
+    description: |
+      Tries to restore cached gems from several different cache-keys
+    parameters:
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+    steps:
+    - restore_cache:
+        keys:
+        - << parameters.cache-version >>-gems-{{ .Branch }}
+        - << parameters.cache-version >>-gems-master
+        - << parameters.cache-version >>-gems
+  restore-packages:
+    description: |
+      Tries to restore cached packages from several different cache-keys
+    parameters:
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+    steps:
+    - restore_cache:
+        keys:
+        - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
+          }}
+        - << parameters.cache-version >>-packages-{{ .Branch }}
+        - << parameters.cache-version >>-packages-master
+        - << parameters.cache-version >>-packages
   update-bundler:
     description: |
       Update rubygems and bundler

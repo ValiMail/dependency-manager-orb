@@ -12,34 +12,34 @@ parameters:
     type: string
     default: node_modules
 
-  restore-cache:
+  restore-packages:
     type: boolean
     default: true
 
-  install-packages:
+  yarn-install:
     type: boolean
     default: true
 
-  save-cache:
+  cache-packages:
     type: boolean
     default: true
 
 steps:
   - when:
-      condition: << parameters.restore-cache >>
+      condition: << parameters.restore-packages >>
       steps:
-        - restore-node-cache:
+        - restore-packages:
             cache-version: << parameters.cache-version >>
 
   - when:
-      condition: << parameters.install-packages >>
+      condition: << parameters.yarn-install >>
       steps:
         - run:
             name: Install node packages
             command: yarn
 
   - when:
-      condition: << parameters.save-cache >>
+      condition: << parameters.cache-packages >>
       steps:
-        - save-node-cache:
+        - cache-packages:
             cache-version: << parameters.cache-version >>

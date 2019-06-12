@@ -1,0 +1,7 @@
+description: >
+  Cleanup old gems so they are not cached
+
+steps:
+  - run:
+      name: Remove old gems
+      command: bundle exec bundle clean

@@ -7,51 +7,62 @@ parameters:
     type: string
     default: vendor/bundle
 
+  bundler-version:
+    description: Which version of bundler to target for install
+    type: string
+    default: 2.0.1
+
   cache-version:
     description: Version prefix to use in cache key
     type: string
     default: v1
 
-  restore-cache:
+  update-bundler:
     type: boolean
     default: true
 
-  install-gems:
+  restore-gems:
     type: boolean
     default: true
 
-  clean-bundle:
+  bundle-gems:
     type: boolean
     default: true
 
-  save-cache:
+  clean-gems:
+    type: boolean
+    default: true
+
+  cache-gems:
     type: boolean
     default: true
 
 steps:
   - when:
-      condition: << parameters.restore-cache >>
+      condition: << parameters.update-bundler >>
       steps:
-        - restore-gem-cache:
+        - update-bundler:
+            bundler-version: << parameters.bundler-version >>
+
+  - when:
+      condition: << parameters.restore-gems >>
+      steps:
+        - restore-gems:
             cache-version: << parameters.cache-version >>
 
   - when:
-      condition: << parameters.install-gems >>
+      condition: << parameters.bundle-gems >>
       steps:
-        - update-bundler
         - bundle-gems:
             bundle-path: << parameters.bundle-path >>
 
   - when:
-      condition: << parameters.clean-bundle >>
+      condition: << parameters.clean-gems >>
       steps:
-        - run:
-            name: Remove old gems
-            command: bundle exec bundle clean
+        - clean-gems
 
   - when:
-      condition: << parameters.save-cache >>
+      condition: << parameters.cache-gems >>
       steps:
-        - save-gem-cache:
+        - cache-gems:
             cache-version: << parameters.cache-version >>
-
