@@ -7,7 +7,7 @@ aliases:
     ~/dependency-manager-orb
 
 orbs:
-  dependency-manager: valimail/dependency-manager@0.2.0
+  dependency-manager: valimail/dependency-manager@0.2.8
 
 executors:
   ruby-node:
