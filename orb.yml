@@ -214,9 +214,6 @@ commands:
           sudo gem update --system
           sudo sh -c 'yes | gem update --force bundler'
         name: Update bundler
-    - run:
-        command: bundle check --path=$BUNDLE_PATH
-        name: Set bundle path
 description: |
   Restore, install, and cache dependencies like Ruby gems and JS packages.
 examples:

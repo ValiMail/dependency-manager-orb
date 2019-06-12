@@ -14,6 +14,3 @@ steps:
         export BUNDLER_VERSION=<< parameters.bundler-version >>
         sudo gem update --system
         sudo sh -c 'yes | gem update --force bundler'
-  - run:
-      name: Set bundle path
-      command: bundle check --path=$BUNDLE_PATH
