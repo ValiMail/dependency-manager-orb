@@ -150,6 +150,25 @@ commands:
         steps:
         - cache-packages:
             cache-version: << parameters.cache-version >>
+  install-yarn:
+    description: |
+      Isntall Node JS and yarn
+    steps:
+    - run:
+        command: |
+          curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+          echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+          echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+          echo 'nvm install 10' >> $BASH_ENV
+          echo 'nvm use 10' >> $BASH_ENV
+        name: Install nodejs
+    - run:
+        command: |
+          sudo apt-get install apt-transport-https
+          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+          sudo apt-get update && sudo apt-get install yarn
+        name: Install yarn
   restore-gems:
     description: |
       Tries to restore cached gems from several different cache-keys
@@ -195,6 +214,9 @@ commands:
           sudo gem update --system
           sudo sh -c 'yes | gem update --force bundler'
         name: Update bundler
+    - run:
+        command: bundle check --path=$BUNDLE_PATH
+        name: Set bundle path
 description: |
   Restore, install, and cache dependencies like Ruby gems and JS packages.
 examples:
