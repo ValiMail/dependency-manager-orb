@@ -7,16 +7,8 @@ parameters:
     type: string
     default: vendor/bundle
 
-  cache-version:
-    description: Version prefix to use in cache key
-    type: string
-    default: v1
-
 steps:
   - run:
       name: Install gems
       command: |
-        export BUNDLE_PATH=<< parameters.bundle-path >>
-        export BUNDLE_JOBS=4
-        export BUNDLE_RETRY=3
-        bundle check || bundle install
+        bundle check --path=<< parameters.bundle-path >> || bundle install --path=<< parameters.bundle-path >> --jobs=4 --retry=3
