@@ -152,7 +152,7 @@ commands:
             cache-version: << parameters.cache-version >>
   install-yarn:
     description: |
-      Isntall Node JS and yarn
+      Install nodejs and yarn
     steps:
     - run:
         command: |

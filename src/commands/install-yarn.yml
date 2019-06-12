@@ -1,5 +1,5 @@
 description: >
-  Isntall Node JS and yarn
+  Install nodejs and yarn
 
 steps:
   - run:
