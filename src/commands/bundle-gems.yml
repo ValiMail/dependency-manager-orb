@@ -1,5 +1,5 @@
 description: >
-  Creates cache of rubygems in vendor/cache folder and installs gems to BUNDLE_PATH afterwards
+  Verifies dependencies are met by installed gems or installs gems
 
 parameters:
   bundle-path:
@@ -16,6 +16,7 @@ steps:
   - run:
       name: Install gems
       command: |
-        export BUNDLE_JOBS=4
         export BUNDLE_PATH=<< parameters.bundle-path >>
-        bundle lock && bundle package --all
+        export BUNDLE_JOBS=4
+        export BUNDLE_RETRY=3
+        bundle check || bundle install

@@ -1,5 +1,5 @@
 description: >
-  Tries to restore cached node packages from several different cache-keys
+  Tries to restore cached packages from several different cache-keys
 
 parameters:
   cache-version:
