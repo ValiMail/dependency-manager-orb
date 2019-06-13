@@ -18,14 +18,13 @@ circleci config pack src > orb.yml
 # Validate orb.yml
 circleci orb validate orb.yml
 
-# Increment ORB_VERSION (below) and publish orb.yml.
-# Note: only GitHub admins of ValiMail can do this currently.
+# For a mutable "dev" version, increment DEV_ORB_VERSION (below) and publish orb.yml.
 DEV_ORB_VERSION=dev:0.3
 circleci orb publish orb.yml valimail/dependency-manager@$DEV_ORB_VERSION
 
-# Increment ORB_VERSION (below) and publish orb.yml.
+# For an immutable release, increment ORB_VERSION (below) and publish orb.yml.
 # Note: only GitHub admins of ValiMail can do this currently.
-ORB_VERSION=0.2.8
+ORB_VERSION=0.3.0
 circleci orb publish orb.yml valimail/dependency-manager@$ORB_VERSION
 
 # Update version for tests in .circlci/config.yml
