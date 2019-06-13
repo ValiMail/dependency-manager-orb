@@ -112,6 +112,13 @@ commands:
         steps:
         - cache-gems:
             cache-version: << parameters.cache-version >>
+  install-go-dependencies:
+    description: |
+      Install Go dependencies
+    steps:
+    - run:
+        command: make prepare
+        name: Install dependencies
   install-packages:
     description: |
       Restore, install, and cache JS packages using Yarn
@@ -150,6 +157,32 @@ commands:
         steps:
         - cache-packages:
             cache-version: << parameters.cache-version >>
+  install-postgres-client:
+    description: |
+      Install PostgreSQL client tools
+    steps:
+    - run:
+        command: |
+          sudo apt-get install curl ca-certificates
+          curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main | sudo sh -c 'cat > /etc/apt/sources.list.d/pgdg.list'
+          sudo apt-get update
+          sudo apt-get install postgresql-client-10
+        name: Install PostgreSQL client tools
+  install-requirements:
+    description: |
+      Install Python requirements
+    steps:
+    - run:
+        command: |
+          . venv/bin/activate
+          pip install -r requirements.txt
+        name: Install requirements
+    - run:
+        command: |
+          . venv/bin/activate
+          pip install -r requirements_test.txt
+        name: Install requirements test
   install-yarn:
     description: |
       Install nodejs and yarn
