@@ -1,0 +1,7 @@
+description: >
+  Install Go dependencies
+
+steps:
+  - run:
+      name: Install dependencies
+      command: make prepare
