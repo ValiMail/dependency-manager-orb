@@ -30,7 +30,6 @@ commands:
           }}
         paths:
         - << parameters.bundle-path >>
-        - vendor/cache
   cache-packages:
     description: |
       Saves installed node packages to persistent cache
