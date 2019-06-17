@@ -24,7 +24,7 @@ circleci orb publish orb.yml valimail/dependency-manager@$DEV_ORB_VERSION
 
 # For an immutable release, increment ORB_VERSION (below) and publish orb.yml.
 # Note: only GitHub admins of ValiMail can do this currently.
-ORB_VERSION=0.3.0
+ORB_VERSION=0.3.1
 circleci orb publish orb.yml valimail/dependency-manager@$ORB_VERSION
 
 # Update version for tests in .circlci/config.yml
