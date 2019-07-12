@@ -118,6 +118,30 @@ commands:
     - run:
         command: make prepare
         name: Install dependencies
+  install-go-modules:
+    description: |
+      Restore, install, and cache Go modules
+    parameters:
+      cache-version:
+        default: v1
+        description: Version prefix to use in cache key
+        type: string
+    steps:
+    - restore_cache:
+        keys:
+        - << parameters.cache-version >>-go-modules-{{ .Branch }}-{{ checksum "go.sum"
+          }}
+        - << parameters.cache-version >>-go-modules-{{ .Branch }}
+        - << parameters.cache-version >>-go-modules-master
+        - << parameters.cache-version >>-go-modules
+    - run:
+        command: go get
+        name: Update Go modules
+    - save_cache:
+        key: << parameters.cache-version >>-go-modules-{{ .Branch }}-{{ checksum "go.sum"
+          }}
+        paths:
+        - /go/pkg/mod
   install-packages:
     description: |
       Restore, install, and cache JS packages using Yarn
