@@ -10,6 +10,7 @@ commands:
     steps:
     - run:
         command: |
+          bundle config build.nokogiri --use-system-libraries
           bundle check --path=<< parameters.bundle-path >> || bundle install --path=<< parameters.bundle-path >> --jobs=4 --retry=3
         name: Install gems
   cache-gems:

@@ -7,7 +7,7 @@ aliases:
     ~/dependency-manager-orb
 
 orbs:
-  dependency-manager: valimail/dependency-manager@dev:0.3
+  dependency-manager: valimail/dependency-manager@volatile
 
 executors:
   ruby-node:
@@ -22,6 +22,7 @@ executors:
 
 jobs:
   test-job:
+    resource_class: small
     executor: ruby-node
     steps:
       - checkout

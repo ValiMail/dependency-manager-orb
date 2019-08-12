@@ -7,8 +7,10 @@ parameters:
     type: string
     default: vendor/bundle
 
+# Have Nokogiri use system libraries to avoid a timeout
 steps:
   - run:
       name: Install gems
       command: |
+        bundle config build.nokogiri --use-system-libraries
         bundle check --path=<< parameters.bundle-path >> || bundle install --path=<< parameters.bundle-path >> --jobs=4 --retry=3
