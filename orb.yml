@@ -68,7 +68,7 @@ commands:
         description: Path to store gems bundle
         type: string
       bundler-version:
-        default: 2.0.1
+        default: 2.1.4
         description: Which version of bundler to target for install
         type: string
       cache-gems:
@@ -261,7 +261,7 @@ commands:
       Update rubygems and bundler
     parameters:
       bundler-version:
-        default: 2.0.1
+        default: 2.1.4
         description: Which version of bundler to target for install
         type: string
     steps:
