@@ -1,6 +1,12 @@
 description: >
   Install PostgreSQL client tools
 
+parameters:
+  postgres-major-version:
+    description: Postgres major version to use for installation
+    type: string
+    default: "10"
+
 steps:
   - run:
       name: Install PostgreSQL client tools
@@ -9,4 +15,4 @@ steps:
         curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
         echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main | sudo sh -c 'cat > /etc/apt/sources.list.d/pgdg.list'
         sudo apt-get update
-        sudo apt-get install postgresql-client-10
+        sudo apt-get install postgresql-client-<< parameters.postgres-major-version >>
