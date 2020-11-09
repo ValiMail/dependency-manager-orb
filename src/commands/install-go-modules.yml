@@ -16,7 +16,7 @@ steps:
         - << parameters.cache-version >>-go-modules
   - run:
       name: Update Go modules
-      command: go get
+      command: GOPRIVATE=github.com/ValiMail go get
   - save_cache:
       key: << parameters.cache-version >>-go-modules-{{ .Branch }}-{{ checksum "go.sum" }}
       paths:

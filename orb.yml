@@ -1,312 +1,307 @@
 commands:
-  bundle-gems:
-    description: |
-      Verifies dependencies are met by installed gems or installs gems
-    parameters:
-      bundle-path:
-        default: vendor/bundle
-        description: Path to store gems bundle
-        type: string
-    steps:
-    - run:
-        command: |
-          bundle config build.nokogiri --use-system-libraries
-          bundle check --path=<< parameters.bundle-path >> || bundle install --path=<< parameters.bundle-path >> --jobs=4 --retry=3
-        name: Install gems
-  cache-gems:
-    description: |
-      Saves installed bundle and cached rubygems to persistent cache
-    parameters:
-      bundle-path:
-        default: vendor/bundle
-        description: Path to store gems bundle
-        type: string
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-    steps:
-    - save_cache:
-        key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock"
-          }}
-        paths:
-        - << parameters.bundle-path >>
-  cache-packages:
-    description: |
-      Saves installed node packages to persistent cache
-    parameters:
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-      node-modules-path:
-        default: node_modules
-        description: Path to store packages
-        type: string
-    steps:
-    - save_cache:
-        key: << parameters.cache-version>>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
-          }}
-        paths:
-        - << parameters.node-modules-path >>
-  clean-gems:
-    description: |
-      Cleanup old gems so they are not cached
-    steps:
-    - run:
-        command: bundle exec bundle clean
-        name: Remove old gems
-  install-gems:
-    description: |
-      Restore, install, and cache Ruby gems
-    parameters:
-      bundle-gems:
-        default: true
-        type: boolean
-      bundle-path:
-        default: vendor/bundle
-        description: Path to store gems bundle
-        type: string
-      bundler-version:
-        default: 2.1.4
-        description: Which version of bundler to target for install
-        type: string
-      cache-gems:
-        default: true
-        type: boolean
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-      clean-gems:
-        default: true
-        type: boolean
-      restore-gems:
-        default: true
-        type: boolean
-      update-bundler:
-        default: true
-        type: boolean
-    steps:
-    - when:
-        condition: << parameters.update-bundler >>
+    bundle-gems:
+        description: |
+            Verifies dependencies are met by installed gems or installs gems
+        parameters:
+            bundle-path:
+                default: vendor/bundle
+                description: Path to store gems bundle
+                type: string
         steps:
-        - update-bundler:
-            bundler-version: << parameters.bundler-version >>
-    - when:
-        condition: << parameters.restore-gems >>
+            - run:
+                command: |
+                    bundle config build.nokogiri --use-system-libraries
+                    bundle check --path=<< parameters.bundle-path >> || bundle install --path=<< parameters.bundle-path >> --jobs=4 --retry=3
+                name: Install gems
+    cache-gems:
+        description: |
+            Saves installed bundle and cached rubygems to persistent cache
+        parameters:
+            bundle-path:
+                default: vendor/bundle
+                description: Path to store gems bundle
+                type: string
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
         steps:
-        - restore-gems:
-            cache-version: << parameters.cache-version >>
-    - when:
-        condition: << parameters.bundle-gems >>
+            - save_cache:
+                key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+                paths:
+                    - << parameters.bundle-path >>
+    cache-packages:
+        description: |
+            Saves installed node packages to persistent cache
+        parameters:
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
+            node-modules-path:
+                default: node_modules
+                description: Path to store packages
+                type: string
         steps:
-        - bundle-gems:
-            bundle-path: << parameters.bundle-path >>
-    - when:
-        condition: << parameters.clean-gems >>
+            - save_cache:
+                key: << parameters.cache-version>>-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                paths:
+                    - << parameters.node-modules-path >>
+    clean-gems:
+        description: |
+            Cleanup old gems so they are not cached
         steps:
-        - clean-gems
-    - when:
-        condition: << parameters.cache-gems >>
+            - run:
+                command: bundle exec bundle clean
+                name: Remove old gems
+    install-gems:
+        description: |
+            Restore, install, and cache Ruby gems
+        parameters:
+            bundle-gems:
+                default: true
+                type: boolean
+            bundle-path:
+                default: vendor/bundle
+                description: Path to store gems bundle
+                type: string
+            bundler-version:
+                default: 2.1.4
+                description: Which version of bundler to target for install
+                type: string
+            cache-gems:
+                default: true
+                type: boolean
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
+            clean-gems:
+                default: true
+                type: boolean
+            restore-gems:
+                default: true
+                type: boolean
+            update-bundler:
+                default: true
+                type: boolean
         steps:
-        - cache-gems:
-            cache-version: << parameters.cache-version >>
-  install-go-dependencies:
-    description: |
-      Install Go dependencies
-    steps:
-    - run:
-        command: make prepare
-        name: Install dependencies
-  install-go-modules:
-    description: |
-      Restore, install, and cache Go modules
-    parameters:
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-    steps:
-    - restore_cache:
-        keys:
-        - << parameters.cache-version >>-go-modules-{{ .Branch }}-{{ checksum "go.sum"
-          }}
-        - << parameters.cache-version >>-go-modules-{{ .Branch }}
-        - << parameters.cache-version >>-go-modules-master
-        - << parameters.cache-version >>-go-modules
-    - run:
-        command: go get
-        name: Update Go modules
-    - save_cache:
-        key: << parameters.cache-version >>-go-modules-{{ .Branch }}-{{ checksum "go.sum"
-          }}
-        paths:
-        - /go/pkg/mod
-  install-packages:
-    description: |
-      Restore, install, and cache JS packages using Yarn
-    parameters:
-      cache-packages:
-        default: true
-        type: boolean
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-      node-modules-path:
-        default: node_modules
-        description: Path to store packages
-        type: string
-      restore-packages:
-        default: true
-        type: boolean
-      yarn-install:
-        default: true
-        type: boolean
-    steps:
-    - when:
-        condition: << parameters.restore-packages >>
+            - when:
+                condition: << parameters.update-bundler >>
+                steps:
+                    - update-bundler:
+                        bundler-version: << parameters.bundler-version >>
+            - when:
+                condition: << parameters.restore-gems >>
+                steps:
+                    - restore-gems:
+                        cache-version: << parameters.cache-version >>
+            - when:
+                condition: << parameters.bundle-gems >>
+                steps:
+                    - bundle-gems:
+                        bundle-path: << parameters.bundle-path >>
+            - when:
+                condition: << parameters.clean-gems >>
+                steps:
+                    - clean-gems
+            - when:
+                condition: << parameters.cache-gems >>
+                steps:
+                    - cache-gems:
+                        cache-version: << parameters.cache-version >>
+    install-go-dependencies:
+        description: |
+            Install Go dependencies
         steps:
-        - restore-packages:
-            cache-version: << parameters.cache-version >>
-    - when:
-        condition: << parameters.yarn-install >>
+            - run:
+                command: make prepare
+                name: Install dependencies
+    install-go-modules:
+        description: |
+            Restore, install, and cache Go modules
+        parameters:
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
         steps:
-        - run:
-            command: yarn
-            name: Install node packages
-    - when:
-        condition: << parameters.cache-packages >>
+            - restore_cache:
+                keys:
+                    - << parameters.cache-version >>-go-modules-{{ .Branch }}-{{ checksum "go.sum" }}
+                    - << parameters.cache-version >>-go-modules-{{ .Branch }}
+                    - << parameters.cache-version >>-go-modules-master
+                    - << parameters.cache-version >>-go-modules
+            - run:
+                command: GOPRIVATE=github.com/ValiMail go get
+                name: Update Go modules
+            - save_cache:
+                key: << parameters.cache-version >>-go-modules-{{ .Branch }}-{{ checksum "go.sum" }}
+                paths:
+                    - /go/pkg/mod
+    install-packages:
+        description: |
+            Restore, install, and cache JS packages using Yarn
+        parameters:
+            cache-packages:
+                default: true
+                type: boolean
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
+            node-modules-path:
+                default: node_modules
+                description: Path to store packages
+                type: string
+            restore-packages:
+                default: true
+                type: boolean
+            yarn-install:
+                default: true
+                type: boolean
         steps:
-        - cache-packages:
-            cache-version: << parameters.cache-version >>
-  install-postgres-client:
-    description: |
-      Install PostgreSQL client tools
-    steps:
-    - run:
-        command: |
-          sudo apt-get install curl ca-certificates
-          curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-          echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main | sudo sh -c 'cat > /etc/apt/sources.list.d/pgdg.list'
-          sudo apt-get update
-          sudo apt-get install postgresql-client-11
-        name: Install PostgreSQL client tools
-  install-requirements:
-    description: |
-      Install Python requirements
-    steps:
-    - run:
-        command: |
-          . venv/bin/activate
-          pip install -r requirements.txt
-        name: Install requirements
-    - run:
-        command: |
-          . venv/bin/activate
-          pip install -r requirements_test.txt
-        name: Install requirements test
-  install-yarn:
-    description: |
-      Install nodejs and yarn
-    steps:
-    - run:
-        command: |
-          curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-          echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
-          echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-          echo 'nvm install 10' >> $BASH_ENV
-          echo 'nvm use 10' >> $BASH_ENV
-        name: Install nodejs
-    - run:
-        command: |
-          sudo apt-get install apt-transport-https
-          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-          echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-          sudo apt-get update && sudo apt-get install yarn
-        name: Install yarn
-  restore-gems:
-    description: |
-      Tries to restore cached gems from several different cache-keys
-    parameters:
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-    steps:
-    - restore_cache:
-        keys:
-        - << parameters.cache-version >>-gems-{{ .Branch }}
-        - << parameters.cache-version >>-gems-master
-        - << parameters.cache-version >>-gems
-  restore-packages:
-    description: |
-      Tries to restore cached packages from several different cache-keys
-    parameters:
-      cache-version:
-        default: v1
-        description: Version prefix to use in cache key
-        type: string
-    steps:
-    - restore_cache:
-        keys:
-        - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock"
-          }}
-        - << parameters.cache-version >>-packages-{{ .Branch }}
-        - << parameters.cache-version >>-packages-master
-        - << parameters.cache-version >>-packages
-  update-bundler:
-    description: |
-      Update rubygems and bundler
-    parameters:
-      bundler-version:
-        default: 2.1.4
-        description: Which version of bundler to target for install
-        type: string
-    steps:
-    - run:
-        command: |
-          export BUNDLER_VERSION=<< parameters.bundler-version >>
-          sudo gem update --system
-          sudo sh -c 'yes | gem update --force bundler'
-        name: Update bundler
+            - when:
+                condition: << parameters.restore-packages >>
+                steps:
+                    - restore-packages:
+                        cache-version: << parameters.cache-version >>
+            - when:
+                condition: << parameters.yarn-install >>
+                steps:
+                    - run:
+                        command: yarn
+                        name: Install node packages
+            - when:
+                condition: << parameters.cache-packages >>
+                steps:
+                    - cache-packages:
+                        cache-version: << parameters.cache-version >>
+    install-postgres-client:
+        description: |
+            Install PostgreSQL client tools
+        steps:
+            - run:
+                command: |
+                    sudo apt-get install curl ca-certificates
+                    curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+                    echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main | sudo sh -c 'cat > /etc/apt/sources.list.d/pgdg.list'
+                    sudo apt-get update
+                    sudo apt-get install postgresql-client-11
+                name: Install PostgreSQL client tools
+    install-requirements:
+        description: |
+            Install Python requirements
+        steps:
+            - run:
+                command: |
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                name: Install requirements
+            - run:
+                command: |
+                    . venv/bin/activate
+                    pip install -r requirements_test.txt
+                name: Install requirements test
+    install-yarn:
+        description: |
+            Install nodejs and yarn
+        steps:
+            - run:
+                command: |
+                    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+                    echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+                    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+                    echo 'nvm install 12' >> $BASH_ENV
+                    echo 'nvm use 12' >> $BASH_ENV
+                name: Install nodejs
+            - run:
+                command: |
+                    sudo apt-get install apt-transport-https
+                    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+                    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+                    sudo apt-get update && sudo apt-get install yarn
+                name: Install yarn
+    restore-gems:
+        description: |
+            Tries to restore cached gems from several different cache-keys
+        parameters:
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
+        steps:
+            - restore_cache:
+                keys:
+                    - << parameters.cache-version >>-gems-{{ .Branch }}
+                    - << parameters.cache-version >>-gems-master
+                    - << parameters.cache-version >>-gems
+    restore-packages:
+        description: |
+            Tries to restore cached packages from several different cache-keys
+        parameters:
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
+        steps:
+            - restore_cache:
+                keys:
+                    - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                    - << parameters.cache-version >>-packages-{{ .Branch }}
+                    - << parameters.cache-version >>-packages-master
+                    - << parameters.cache-version >>-packages
+    update-bundler:
+        description: |
+            Update rubygems and bundler
+        parameters:
+            bundler-version:
+                default: 2.1.4
+                description: Which version of bundler to target for install
+                type: string
+        steps:
+            - run:
+                command: |
+                    export BUNDLER_VERSION=<< parameters.bundler-version >>
+                    sudo gem update --system
+                    sudo sh -c 'yes | gem update --force bundler'
+                name: Update bundler
 description: |
-  Restore, install, and cache dependencies like Ruby gems and JS packages.
+    Restore, install, and cache dependencies like Ruby gems and JS packages.
 examples:
-  default:
-    description: |
-      Install dependencies using the default cache-version ("v1").
-    usage:
-      jobs:
-        setup-job:
-          executor:
-            name: ruby-system
-          steps:
-          - checkout
-          - install_required_software
-          - dependency-manager/install-gems
-          - dependency-manager/install-packages
-      orbs:
-        dependency-manager: valimail/dependency-manager@0.1.2
-      version: 2.1
-  simple:
-    description: |
-      Install dependencies, explicitly setting the cache-version parameter (recommended).
-    usage:
-      jobs:
-        setup-job:
-          executor:
-            name: ruby-system
-          steps:
-          - checkout
-          - install_required_software
-          - dependency-manager/install-gems:
-              cache-version: v3
-          - dependency-manager/install-packages:
-              cache-version: v2
-      orbs:
-        dependency-manager: valimail/dependency-manager@0.1.2
-      version: 2.1
+    default:
+        description: |
+            Install dependencies using the default cache-version ("v1").
+        usage:
+            jobs:
+                setup-job:
+                    executor:
+                        name: ruby-system
+                    steps:
+                        - checkout
+                        - install_required_software
+                        - dependency-manager/install-gems
+                        - dependency-manager/install-packages
+            orbs:
+                dependency-manager: valimail/dependency-manager@0.1.2
+            version: 2.1
+    simple:
+        description: |
+            Install dependencies, explicitly setting the cache-version parameter (recommended).
+        usage:
+            jobs:
+                setup-job:
+                    executor:
+                        name: ruby-system
+                    steps:
+                        - checkout
+                        - install_required_software
+                        - dependency-manager/install-gems:
+                            cache-version: v3
+                        - dependency-manager/install-packages:
+                            cache-version: v2
+            orbs:
+                dependency-manager: valimail/dependency-manager@0.1.2
+            version: 2.1
 version: 2.1
 
