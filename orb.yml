@@ -11,7 +11,8 @@ commands:
             - run:
                 command: |
                     bundle config build.nokogiri --use-system-libraries
-                    bundle check --path=<< parameters.bundle-path >> || bundle install --path=<< parameters.bundle-path >> --jobs=4 --retry=3
+                    bundle config set --local path '<< parameters.bundle-path >>'
+                    bundle check || bundle install --jobs=4 --retry=3
                 name: Install gems
     cache-gems:
         description: |
@@ -66,7 +67,7 @@ commands:
                 description: Path to store gems bundle
                 type: string
             bundler-version:
-                default: 2.1.4
+                default: 2.2.7
                 description: Which version of bundler to target for install
                 type: string
             cache-gems:
@@ -256,7 +257,7 @@ commands:
             Update rubygems and bundler
         parameters:
             bundler-version:
-                default: 2.1.4
+                default: 2.2.7
                 description: Which version of bundler to target for install
                 type: string
         steps:
