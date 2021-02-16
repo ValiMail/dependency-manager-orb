@@ -66,10 +66,6 @@ commands:
                 default: vendor/bundle
                 description: Path to store gems bundle
                 type: string
-            bundler-version:
-                default: 2.2.7
-                description: Which version of bundler to target for install
-                type: string
             cache-gems:
                 default: true
                 type: boolean
@@ -83,6 +79,10 @@ commands:
             restore-gems:
                 default: true
                 type: boolean
+            rubygems-version:
+                default: ""
+                description: Which version of Rubygems to target for install, empty is latest
+                type: string
             update-bundler:
                 default: true
                 type: boolean
@@ -91,7 +91,7 @@ commands:
                 condition: << parameters.update-bundler >>
                 steps:
                     - update-bundler:
-                        bundler-version: << parameters.bundler-version >>
+                        rubygems-version: << parameters.rubygems-version >>
             - when:
                 condition: << parameters.restore-gems >>
                 steps:
@@ -256,16 +256,14 @@ commands:
         description: |
             Update rubygems and bundler
         parameters:
-            bundler-version:
-                default: 2.2.7
-                description: Which version of bundler to target for install
+            rubygems-version:
+                default: ""
+                description: Which version of Rubygems to target for install, empty is latest
                 type: string
         steps:
             - run:
                 command: |
-                    export BUNDLER_VERSION=<< parameters.bundler-version >>
-                    sudo gem update --system
-                    sudo sh -c 'yes | gem update --force bundler'
+                    sudo gem update --system << parameters.rubygems-version >>
                 name: Update bundler
 description: |
     Restore, install, and cache dependencies like Ruby gems and JS packages.

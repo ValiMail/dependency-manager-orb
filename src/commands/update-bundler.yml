@@ -2,15 +2,13 @@ description: >
   Update rubygems and bundler
 
 parameters:
-  bundler-version:
-    description: Which version of bundler to target for install
-    type: string
-    default: 2.2.7
+  rubygems-version:
+      default: ''
+      description: Which version of Rubygems to target for install, empty is latest
+      type: string
 
 steps:
   - run:
       name: Update bundler
       command: |
-        export BUNDLER_VERSION=<< parameters.bundler-version >>
-        sudo gem update --system
-        sudo sh -c 'yes | gem update --force bundler'
+        sudo gem update --system << parameters.rubygems-version >>

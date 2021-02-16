@@ -15,7 +15,7 @@ executors:
       - image: circleci/ruby:2.6.2-stretch-node-browsers
         environment:
           BUNDLE_PATH: *bundle_path
-          BUNDLER_VERSION: 2.2.7
+          BUNDLER_VERSION: 2.2.9
           RAILS_ENV: test
           RACK_ENV: test
   working_directory: *working_path
