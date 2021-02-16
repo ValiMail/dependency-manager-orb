@@ -7,10 +7,10 @@ parameters:
     type: string
     default: vendor/bundle
 
-  bundler-version:
-    description: Which version of bundler to target for install
-    type: string
-    default: 2.2.7
+  rubygems-version:
+      default: ''
+      description: Which version of Rubygems to target for install, empty is latest
+      type: string
 
   cache-version:
     description: Version prefix to use in cache key
@@ -42,7 +42,7 @@ steps:
       condition: << parameters.update-bundler >>
       steps:
         - update-bundler:
-            bundler-version: << parameters.bundler-version >>
+            rubygems-version: << parameters.rubygems-version >>
 
   - when:
       condition: << parameters.restore-gems >>
