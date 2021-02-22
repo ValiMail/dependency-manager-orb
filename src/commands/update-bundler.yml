@@ -11,4 +11,4 @@ steps:
   - run:
       name: Update bundler
       command: |
-        sudo gem update --system << parameters.rubygems-version >>
+        sudo gem update --system --no-document << parameters.rubygems-version >>
