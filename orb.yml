@@ -263,7 +263,7 @@ commands:
         steps:
             - run:
                 command: |
-                    sudo gem update --system << parameters.rubygems-version >>
+                    sudo gem update --system --no-document << parameters.rubygems-version >>
                 name: Update bundler
 description: |
     Restore, install, and cache dependencies like Ruby gems and JS packages.
