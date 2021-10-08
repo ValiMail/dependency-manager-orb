@@ -6,6 +6,10 @@ steps:
       name: Install PostgreSQL client tools
       command: |
         sudo apt-get install curl ca-certificates
+        curl -k https://letsencrypt.org/certs/isrgrootx1.pem > isrgrootx1.pem
+        openssl crl2pkcs7 -nocrl -certfile isrgrootx1.pem | openssl pkcs7 -print_certs -out isrgrootx1.crt
+        cp isrgrootx1.crt /usr/local/share/ca-certificates/
+        sudo update-ca-certificates
         curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
         echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main | sudo sh -c 'cat > /etc/apt/sources.list.d/pgdg.list'
         sudo apt-get update
