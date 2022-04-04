@@ -12,6 +12,16 @@ Work on files in the `src` directory and when you're ready you can "pack",
 "validate", and "publish" the orb.
 
 ```bash
+# Set up CircleCI CLI
+
+# Install CircleCI CLI via brew
+brew install circleci
+
+# Get a token
+circleci setup
+```
+
+```bash
 # Build orb.yml from files in src folder
 circleci config pack src > orb.yml
 
@@ -24,7 +34,7 @@ circleci orb publish orb.yml valimail/dependency-manager@$DEV_ORB_VERSION
 
 # For an immutable release, increment ORB_VERSION (below) and publish orb.yml.
 # Note: only GitHub admins of ValiMail can do this currently.
-ORB_VERSION=0.4.12
+ORB_VERSION=0.5.0
 circleci orb publish orb.yml valimail/dependency-manager@$ORB_VERSION
 
 # Update version for tests in .circleci/config.yml
