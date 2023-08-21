@@ -1,5 +1,5 @@
 description: >
-  Install nodejs and yarn
+  Install nodejs, yarn and fontawesome
 
 steps:
   - run:
@@ -17,3 +17,9 @@ steps:
           curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
           echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
           sudo apt-get update && sudo apt-get install yarn
+  - run:
+      name: Install fontawesome
+      command: |
+          npm config set "@fortawesome:registry" https://npm.fontawesome.com/
+          npm config set "//npm.fontawesome.com/:_authToken" 97434960-D96A-422B-88C2-D505A1489663
+          npm install --save @fortawesome/fontawesome-pro
