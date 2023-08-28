@@ -173,14 +173,14 @@ commands:
             - when:
                 condition: << parameters.yarn-install >>
                 steps:
-                    - command: |
-                        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-                        echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
-                        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-                        echo 'nvm install 16' >> $BASH_ENV
-                        echo 'nvm use 16' >> $BASH_ENV
-                      name: Install nodejs
-                      run: null
+                    - run:
+                        command: |
+                            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+                            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+                            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+                            echo 'nvm install 16' >> $BASH_ENV
+                            echo 'nvm use 16' >> $BASH_ENV
+                        name: Install nodejs
                     - run:
                         command: yarn
                         name: Install node packages
