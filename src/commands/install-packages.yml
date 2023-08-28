@@ -22,7 +22,7 @@ parameters:
 
   yarn-compile:
     type: boolean
-    default: true
+    default: false
 
   cache-packages:
     type: boolean
