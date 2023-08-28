@@ -158,6 +158,9 @@ commands:
             restore-packages:
                 default: true
                 type: boolean
+            yarn-compile:
+                default: false
+                type: boolean
             yarn-install:
                 default: true
                 type: boolean
@@ -173,6 +176,12 @@ commands:
                     - run:
                         command: yarn
                         name: Install node packages
+            - when:
+                condition: << parameters.yarn-compile >>
+                steps:
+                    - run:
+                        command: yarn build:test
+                        name: Compile webpacker packs
             - when:
                 condition: << parameters.cache-packages >>
                 steps:
