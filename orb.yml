@@ -158,6 +158,9 @@ commands:
             restore-packages:
                 default: true
                 type: boolean
+            yarn-compile:
+                default: false
+                type: boolean
             yarn-install:
                 default: true
                 type: boolean
@@ -170,9 +173,23 @@ commands:
             - when:
                 condition: << parameters.yarn-install >>
                 steps:
+                    - command: |
+                        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+                        echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+                        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+                        echo 'nvm install 16' >> $BASH_ENV
+                        echo 'nvm use 16' >> $BASH_ENV
+                      name: Install nodejs
+                      run: null
                     - run:
                         command: yarn
                         name: Install node packages
+            - when:
+                condition: << parameters.yarn-compile >>
+                steps:
+                    - run:
+                        command: yarn build:test
+                        name: Compile webpacker packs
             - when:
                 condition: << parameters.cache-packages >>
                 steps:
