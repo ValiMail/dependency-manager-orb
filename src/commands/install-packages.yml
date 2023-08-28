@@ -20,6 +20,10 @@ parameters:
     type: boolean
     default: true
 
+  yarn-compile:
+    type: boolean
+    default: false
+
   cache-packages:
     type: boolean
     default: true
@@ -37,6 +41,13 @@ steps:
         - run:
             name: Install node packages
             command: yarn
+
+  - when:
+      condition: << parameters.yarn-compile >>
+      steps:
+        - run:
+            name: Compile webpacker packs
+            command: yarn build:test
 
   - when:
       condition: << parameters.cache-packages >>
