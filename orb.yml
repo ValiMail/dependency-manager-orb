@@ -182,7 +182,7 @@ commands:
                             echo 'nvm use 16' >> $BASH_ENV
                         name: Install nodejs
                     - run:
-                        command: yarn install --frozen-lockfile
+                        command: yarn
                         name: Install node packages
             - when:
                 condition: << parameters.yarn-compile >>
