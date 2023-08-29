@@ -48,7 +48,7 @@ steps:
               echo 'nvm use 16' >> $BASH_ENV
         - run:
             name: Install node packages
-            command: yarn install --frozen-lockfile --cache-folder << parameters.node-modules-path >>
+            command: yarn install --frozen-lockfile
 
   - when:
       condition: << parameters.yarn-compile >>
