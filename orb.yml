@@ -224,11 +224,6 @@ commands:
     install-yarn:
         description: |
             Install nodejs and yarn
-        parameters:
-            node-modules-path:
-                default: node_modules
-                description: Path to store packages
-                type: string
         steps:
             - run:
                 command: |
@@ -244,7 +239,6 @@ commands:
                     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
                     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
                     sudo apt-get update && sudo apt-get install yarn
-                    yarn config set cache-folder << parameters.node-modules-path >>
                 name: Install yarn
     restore-gems:
         description: |
