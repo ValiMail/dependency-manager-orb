@@ -182,7 +182,7 @@ commands:
                             echo 'nvm use 16' >> $BASH_ENV
                         name: Install nodejs
                     - run:
-                        command: yarn
+                        command: yarn install --cache-folder << parameters.node-modules-path >>
                         name: Install node packages
             - when:
                 condition: << parameters.yarn-compile >>
