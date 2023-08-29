@@ -174,14 +174,6 @@ commands:
                 condition: << parameters.yarn-install >>
                 steps:
                     - run:
-                        command: |
-                            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-                            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
-                            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-                            echo 'nvm install 16' >> $BASH_ENV
-                            echo 'nvm use 16' >> $BASH_ENV
-                        name: Install nodejs
-                    - run:
                         command: yarn
                         name: Install node packages
             - when:
@@ -267,7 +259,6 @@ commands:
                 keys:
                     - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
                     - << parameters.cache-version >>-packages-{{ .Branch }}
-                    - << parameters.cache-version >>-packages-main-{{ checksum "yarn.lock" }}
                     - << parameters.cache-version >>-packages-main
                     - << parameters.cache-version >>-packages
     update-bundler:
