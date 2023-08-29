@@ -1,6 +1,13 @@
 description: >
   Install nodejs and yarn
 
+
+parameters:
+  node-modules-path:
+    description: Path to store packages
+    type: string
+    default: node_modules
+
 steps:
   - run:
       name: Install nodejs
