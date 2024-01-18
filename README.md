@@ -29,7 +29,7 @@ circleci config pack src > orb.yml
 circleci orb validate orb.yml
 
 # For a mutable "dev" version, increment DEV_ORB_VERSION (below) and publish orb.yml.
-DEV_ORB_VERSION=dev:0.5.13
+DEV_ORB_VERSION=dev:0.5.14
 circleci orb publish orb.yml valimail/dependency-manager@$DEV_ORB_VERSION
 
 # For an immutable release, increment ORB_VERSION (below) and publish orb.yml.
