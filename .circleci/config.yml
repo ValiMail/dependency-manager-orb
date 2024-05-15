@@ -12,10 +12,10 @@ orbs:
 executors:
   ruby-node:
     docker:
-      - image: cimg/ruby:2.6.10-browsers
+      - image: cimg/ruby:3.2.4-browsers
         environment:
           BUNDLE_PATH: *bundle_path
-          BUNDLER_VERSION: 2.2.9
+          BUNDLER_VERSION: 3.5.10
           RAILS_ENV: test
           RACK_ENV: test
   working_directory: *working_path
