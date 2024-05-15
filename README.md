@@ -18,6 +18,7 @@ Work on files in the `src` directory and when you're ready you can "pack",
 brew install circleci
 
 # Get a token
+# If you haven't created a token for yourself yet go and do it here: https://app.circleci.com/settings/user/tokens
 circleci setup
 ```
 
