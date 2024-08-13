@@ -53,7 +53,7 @@ commands:
             Cleanup old gems so they are not cached
         steps:
             - run:
-                command: rm -rf ~/.bundle/cache/compact_index/gems* && bundle exec bundle clean --force
+                command: bundle exec bundle clean
                 name: Remove old gems
     install-gems:
         description: |
