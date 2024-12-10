@@ -40,7 +40,7 @@ steps:
       steps:
         - run:
             name: Install node packages
-            command: yarn
+            command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
 
   - when:
       condition: << parameters.yarn-compile >>

@@ -14,6 +14,6 @@ parameters:
 
 steps:
   - save_cache:
-      key: << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      key: << parameters.cache-version >>-yarn-packages-{{ checksum "yarn.lock" }}
       paths:
-        - << parameters.node-modules-path >>
+        - ~/.cache/yarn
