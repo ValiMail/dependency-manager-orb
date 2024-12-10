@@ -45,15 +45,15 @@ commands:
                 type: string
         steps:
             - save_cache:
-                key: << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                key: << parameters.cache-version >>-yarn-packages-{{ checksum "yarn.lock" }}
                 paths:
-                    - << parameters.node-modules-path >>
+                    - ~/.cache/yarn
     clean-gems:
         description: |
             Cleanup old gems so they are not cached
         steps:
             - run:
-                command: rm -rf ~/.bundle/cache/compact_index/gems* && bundle exec bundle clean --force
+                command: bundle exec bundle clean
                 name: Remove old gems
     install-gems:
         description: |
@@ -174,7 +174,7 @@ commands:
                 condition: << parameters.yarn-install >>
                 steps:
                     - run:
-                        command: yarn
+                        command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
                         name: Install node packages
             - when:
                 condition: << parameters.yarn-compile >>
@@ -257,7 +257,7 @@ commands:
         steps:
             - restore_cache:
                 keys:
-                    - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                    - << parameters.cache-version >>-yarn-packages-{{ checksum "yarn.lock" }}
                     - << parameters.cache-version >>-packages-{{ .Branch }}
                     - << parameters.cache-version >>-packages-main
                     - << parameters.cache-version >>-packages
