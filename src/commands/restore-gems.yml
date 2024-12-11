@@ -10,7 +10,7 @@ parameters:
 steps:
   - restore_cache:
       keys:
-        - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+        - << parameters.cache-version >>-gems-{{ checksum "Gemfile.lock" }}
         - << parameters.cache-version >>-gems-{{ .Branch }}
         - << parameters.cache-version >>-gems-master
         - << parameters.cache-version >>-gems

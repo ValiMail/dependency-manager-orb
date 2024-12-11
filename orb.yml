@@ -28,7 +28,7 @@ commands:
                 type: string
         steps:
             - save_cache:
-                key: << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+                key: << parameters.cache-version >>-gems-{{ checksum "Gemfile.lock" }}
                 paths:
                     - << parameters.bundle-path >>
     cache-packages:
@@ -243,7 +243,7 @@ commands:
         steps:
             - restore_cache:
                 keys:
-                    - << parameters.cache-version >>-gems-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+                    - << parameters.cache-version >>-gems-{{ checksum "Gemfile.lock" }}
                     - << parameters.cache-version >>-gems-{{ .Branch }}
                     - << parameters.cache-version >>-gems-master
                     - << parameters.cache-version >>-gems
