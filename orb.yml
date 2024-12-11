@@ -43,11 +43,15 @@ commands:
                 default: node_modules
                 description: Path to store packages
                 type: string
+            yarn-cache-path:
+                default: ~/.cache/yarn
+                description: Path to cache yarn packages
+                type: string
         steps:
             - save_cache:
                 key: << parameters.cache-version >>-yarn-packages-{{ checksum "yarn.lock" }}
                 paths:
-                    - ~/.cache/yarn
+                    - << parameters.yarn-cache-path >>
     clean-gems:
         description: |
             Cleanup old gems so they are not cached
@@ -158,6 +162,10 @@ commands:
             restore-packages:
                 default: true
                 type: boolean
+            yarn-cache-path:
+                default: ~/.cache/yarn
+                description: Path to cache yarn packages
+                type: string
             yarn-compile:
                 default: false
                 type: boolean
@@ -174,7 +182,7 @@ commands:
                 condition: << parameters.yarn-install >>
                 steps:
                     - run:
-                        command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+                        command: yarn install --frozen-lockfile --cache-folder << parameters.yarn-cache-path >>
                         name: Install node packages
             - when:
                 condition: << parameters.yarn-compile >>
@@ -187,6 +195,7 @@ commands:
                 steps:
                     - cache-packages:
                         cache-version: << parameters.cache-version >>
+                        yarn-cache-path: << parameters.yarn-cache-path >>
     install-postgres-client:
         description: |
             Install PostgreSQL client tools
@@ -245,7 +254,7 @@ commands:
                 keys:
                     - << parameters.cache-version >>-gems-{{ checksum "Gemfile.lock" }}
                     - << parameters.cache-version >>-gems-{{ .Branch }}
-                    - << parameters.cache-version >>-gems-master
+                    - << parameters.cache-version >>-gems-main
                     - << parameters.cache-version >>-gems
     restore-packages:
         description: |

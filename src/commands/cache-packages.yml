@@ -12,8 +12,13 @@ parameters:
     type: string
     default: v1
 
+  yarn-cache-path:
+    description: Path to cache yarn packages
+    type: string
+    default: ~/.cache/yarn
+
 steps:
   - save_cache:
       key: << parameters.cache-version >>-yarn-packages-{{ checksum "yarn.lock" }}
       paths:
-        - ~/.cache/yarn
+        - << parameters.yarn-cache-path >>
