@@ -4,4 +4,4 @@ description: >
 steps:
   - run:
       name: Remove old gems
-      command: bundle exec bundle clean
+      command: rm -rf ~/.bundle/cache/compact_index/gems* && bundle exec bundle clean --force

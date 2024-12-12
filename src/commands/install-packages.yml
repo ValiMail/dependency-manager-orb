@@ -28,6 +28,11 @@ parameters:
     type: boolean
     default: true
 
+  yarn-cache-path:
+    description: Path to cache yarn packages
+    type: string
+    default: ~/.cache/yarn
+
 steps:
   - when:
       condition: << parameters.restore-packages >>
@@ -40,7 +45,7 @@ steps:
       steps:
         - run:
             name: Install node packages
-            command: yarn
+            command: yarn install --frozen-lockfile --cache-folder << parameters.yarn-cache-path >>
 
   - when:
       condition: << parameters.yarn-compile >>
@@ -54,3 +59,4 @@ steps:
       steps:
         - cache-packages:
             cache-version: << parameters.cache-version >>
+            yarn-cache-path: << parameters.yarn-cache-path >>

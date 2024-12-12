@@ -10,6 +10,7 @@ parameters:
 steps:
   - restore_cache:
       keys:
+        - << parameters.cache-version >>-yarn-packages-{{ checksum "yarn.lock" }}
         - << parameters.cache-version >>-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
         - << parameters.cache-version >>-packages-{{ .Branch }}
         - << parameters.cache-version >>-packages-main
