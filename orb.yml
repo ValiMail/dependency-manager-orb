@@ -224,16 +224,20 @@ commands:
                 name: Install requirements test
     install-yarn:
         description: |
-            Install nodejs and yarn
+            Install nvm, nodejs and yarn
+        parameters:
+            node-major-version:
+                default: "20"
+                type: string
         steps:
             - run:
                 command: |
                     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
                     echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
                     echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-                    echo 'nvm install 20' >> $BASH_ENV
-                    echo 'nvm use 20' >> $BASH_ENV
-                name: Install nodejs
+                    echo 'nvm install << parameters.node-major-version >> >> /dev/null' >> $BASH_ENV
+                    echo 'nvm use << parameters.node-major-version >> --silent' >> $BASH_ENV
+                name: Install nvm and nodejs
             - run:
                 command: |
                     sudo apt-get install apt-transport-https
