@@ -6,18 +6,6 @@ CircleCI Orb for managing dependencies like Ruby gems and JS packages.
 
 Published at https://circleci.com/orbs/registry/orb/valimail/dependency-manager
 
-The following repos utilize `dependency-manager-orb`:
-- auth_manager
-- coppertonetone
-- dns_adapter
-- dmarc_creator
-- dmarc_ingester
-- domain_email_auth_analyzer
-- domain_iq_service
-- domain_name_util
-- mimir
-- sender_id
-
 ## Development
 
 Work on files in the `src` directory and when you're ready you can "pack",
