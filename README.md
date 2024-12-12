@@ -1,10 +1,22 @@
 # valimail/dependency-manager - CircleCI Orb
 
-[![CircleCI](https://circleci.com/gh/ValiMail/dependency-manager-orb.svg?style=svg&circle-token=540455df00def7479a3c81c9ab9ac8ab4f810178)](https://circleci.com/gh/ValiMail/dependency-manager-orb)
+[![CircleCI](https://circleci.com/gh/ValiMail/dependency-manager-orb.svg?style=svg&circle-token=CCIPRJ_52w9NUfpNFGfikTxqmEGps_71de7acbfb47a8c93958c5d350aa3711f3105166)](https://circleci.com/gh/ValiMail/dependency-manager-orb)
 
 CircleCI Orb for managing dependencies like Ruby gems and JS packages.
 
 Published at https://circleci.com/orbs/registry/orb/valimail/dependency-manager
+
+The following repos utilize `dependency-manager-orb`:
+- [auth_manager](https://github.com/ValiMail/auth_manager)
+- [coppertone](https://github.com/ValiMail/coppertone)
+- [dns_adapter](https://github.com/ValiMail/dns_adapter)
+- [dmarc_creator](https://github.com/ValiMail/dmarc_creator)
+- [dmarc_ingester](https://github.com/ValiMail/dmarc_ingester)
+- [domain_email_auth_analyzer](https://github.com/ValiMail/domain_email_auth_analyzer)
+- [domain_iq_service](https://github.com/ValiMail/domain_iq_service)
+- [domain_name_util](https://github.com/ValiMail/domain_name_util)
+- [mimir](https://github.com/ValiMail/mimir)
+- [sender_id](https://github.com/ValiMail/sender_id)
 
 ## Development
 
