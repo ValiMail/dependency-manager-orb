@@ -1,6 +1,6 @@
 # valimail/dependency-manager - CircleCI Orb
 
-[![CircleCI](https://circleci.com/gh/ValiMail/dependency-manager-orb.svg?style=svg&circle-token=CCIPRJ_52w9NUfpNFGfikTxqmEGps_71de7acbfb47a8c93958c5d350aa3711f3105166)](https://circleci.com/gh/ValiMail/dependency-manager-orb)
+[![CircleCI](https://circleci.com/gh/ValiMail/dependency-manager-orb.svg?style=svg&circle-token=CCIPRJ_tyru3cw6Nr8RU8QomXrMM_55946223a8cf052edef39f3f30345c182abc9216)](https://circleci.com/gh/ValiMail/dependency-manager-orb)
 
 CircleCI Orb for managing dependencies like Ruby gems and JS packages.
 
