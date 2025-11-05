@@ -4,7 +4,7 @@ description: >
 parameters:
   node-major-version:
     type: string
-    default: '20'
+    default: '22'
 
 steps:
   - run:

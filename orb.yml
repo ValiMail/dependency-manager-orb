@@ -227,7 +227,7 @@ commands:
             Install nvm, nodejs and yarn
         parameters:
             node-major-version:
-                default: "20"
+                default: "22"
                 type: string
         steps:
             - run:
