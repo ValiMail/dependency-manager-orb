@@ -16,6 +16,10 @@ parameters:
     type: boolean
     default: true
 
+  restore-webpacker-packages:
+    type: boolean
+    default: false
+
   yarn-install:
     type: boolean
     default: true
@@ -28,10 +32,19 @@ parameters:
     type: boolean
     default: true
 
+  cache-webpacker-packages:
+    type: boolean
+    default: false
+
   yarn-cache-path:
     description: Path to cache yarn packages
     type: string
     default: ~/.cache/yarn
+
+  public-packs-path:
+    description: Path to store webpacker packages
+    type: string
+    default: public/packs
 
 steps:
   - when:
@@ -48,6 +61,19 @@ steps:
             command: yarn install --frozen-lockfile --cache-folder << parameters.yarn-cache-path >>
 
   - when:
+      condition: << parameters.cache-packages >>
+      steps:
+        - cache-packages:
+            cache-version: << parameters.cache-version >>
+            yarn-cache-path: << parameters.yarn-cache-path >>
+
+  - when:
+      condition: << parameters.restore-webpacker-packages >>
+      steps:
+        - restore-packages:
+            cache-version: << parameters.cache-version >>
+
+  - when:
       condition: << parameters.yarn-compile >>
       steps:
         - run:
@@ -55,8 +81,8 @@ steps:
             command: yarn build:test
 
   - when:
-      condition: << parameters.cache-packages >>
+      condition: << parameters.cache-webpacker-packages >>
       steps:
-        - cache-packages:
+        - cache-webpacker-packages:
             cache-version: << parameters.cache-version >>
-            yarn-cache-path: << parameters.yarn-cache-path >>
+            public-packs-path: << parameters.public-packs-path >>
