@@ -1,0 +1,19 @@
+description: >
+  Saves compiled webpacker packages to persistent cache
+
+parameters:
+  public-packs-path:
+    description: Path to store webpacker packages
+    type: string
+    default: public/packs
+
+  cache-version:
+    description: Version prefix to use in cache key
+    type: string
+    default: v1
+
+steps:
+  - save_cache:
+      key: << parameters.cache-version >>-webpacker-packages-{{ .Branch }}-{{ .Revision }}
+      paths:
+        - << parameters.public-packs-path >>

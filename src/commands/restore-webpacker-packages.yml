@@ -1,0 +1,16 @@
+description: >
+  Tries to restore cached webpacker packages from several different cache-keys
+
+parameters:
+  cache-version:
+    description: Version prefix to use in cache key
+    type: string
+    default: v1
+
+steps:
+  - restore_cache:
+      keys:
+        - << parameters.cache-version >>-webpacker-packages-{{ .Branch }}-{{ .Revision }}
+        - << parameters.cache-version >>-webpacker-packages-{{ .Branch }}
+        - << parameters.cache-version >>-webpacker-packages-main
+        - << parameters.cache-version >>-webpacker-packages
