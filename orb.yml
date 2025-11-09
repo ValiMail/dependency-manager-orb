@@ -51,7 +51,25 @@ commands:
             - save_cache:
                 key: << parameters.cache-version >>-yarn-packages-{{ checksum "yarn.lock" }}
                 paths:
+                    - << parameters.node-modules-path >>
                     - << parameters.yarn-cache-path >>
+    cache-webpacker-packages:
+        description: |
+            Saves compiled webpacker packages to persistent cache
+        parameters:
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
+            public-packs-path:
+                default: public/packs
+                description: Path to store webpacker packages
+                type: string
+        steps:
+            - save_cache:
+                key: << parameters.cache-version >>-webpacker-packages-{{ .Branch }}-{{ .Revision }}
+                paths:
+                    - << parameters.public-packs-path >>
     clean-gems:
         description: |
             Cleanup old gems so they are not cached
@@ -155,12 +173,22 @@ commands:
                 default: v1
                 description: Version prefix to use in cache key
                 type: string
+            cache-webpacker-packages:
+                default: false
+                type: boolean
             node-modules-path:
                 default: node_modules
                 description: Path to store packages
                 type: string
+            public-packs-path:
+                default: public/packs
+                description: Path to store webpacker packages
+                type: string
             restore-packages:
                 default: true
+                type: boolean
+            restore-webpacker-packages:
+                default: false
                 type: boolean
             yarn-cache-path:
                 default: ~/.cache/yarn
@@ -185,17 +213,29 @@ commands:
                         command: yarn install --frozen-lockfile --cache-folder << parameters.yarn-cache-path >>
                         name: Install node packages
             - when:
+                condition: << parameters.cache-packages >>
+                steps:
+                    - cache-packages:
+                        cache-version: << parameters.cache-version >>
+                        node-modules-path: << parameters.node-modules-path >>
+                        yarn-cache-path: << parameters.yarn-cache-path >>
+            - when:
+                condition: << parameters.restore-webpacker-packages >>
+                steps:
+                    - restore-packages:
+                        cache-version: << parameters.cache-version >>
+            - when:
                 condition: << parameters.yarn-compile >>
                 steps:
                     - run:
                         command: yarn build:test
                         name: Compile webpacker packs
             - when:
-                condition: << parameters.cache-packages >>
+                condition: << parameters.cache-webpacker-packages >>
                 steps:
-                    - cache-packages:
+                    - cache-webpacker-packages:
                         cache-version: << parameters.cache-version >>
-                        yarn-cache-path: << parameters.yarn-cache-path >>
+                        public-packs-path: << parameters.public-packs-path >>
     install-postgres-client:
         description: |
             Install PostgreSQL client tools
@@ -276,6 +316,21 @@ commands:
                     - << parameters.cache-version >>-packages-{{ .Branch }}
                     - << parameters.cache-version >>-packages-main
                     - << parameters.cache-version >>-packages
+    restore-webpacker-packages:
+        description: |
+            Tries to restore cached webpacker packages from several different cache-keys
+        parameters:
+            cache-version:
+                default: v1
+                description: Version prefix to use in cache key
+                type: string
+        steps:
+            - restore_cache:
+                keys:
+                    - << parameters.cache-version >>-webpacker-packages-{{ .Branch }}-{{ .Revision }}
+                    - << parameters.cache-version >>-webpacker-packages-{{ .Branch }}
+                    - << parameters.cache-version >>-webpacker-packages-main
+                    - << parameters.cache-version >>-webpacker-packages
     update-bundler:
         description: |
             Update rubygems and bundler
