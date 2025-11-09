@@ -66,6 +66,7 @@ steps:
         - cache-packages:
             cache-version: << parameters.cache-version >>
             yarn-cache-path: << parameters.yarn-cache-path >>
+            node-modules-path: << parameters.node-modules-path >>
 
   - when:
       condition: << parameters.restore-webpacker-packages >>
