@@ -281,11 +281,21 @@ commands:
                 name: Install nvm and nodejs
             - run:
                 command: |
-                    sudo apt-get install apt-transport-https
-                    sudo mkdir -m 0755 -p /etc/apt/keyrings
-                    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/yarn.gpg >/dev/null
-                    echo "deb [signed-by=/etc/apt/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-                    sudo apt-get update && sudo apt-get install yarn
+                    source "$BASH_ENV"
+                    node -v
+                    corepack --version
+                    # Debugging: what would `apt-get install yarn` pick on this image?
+                    #   apt-cache policy yarn
+                    #   apt-cache madison yarn
+                    # (If you're on Ubuntu repos without Yarn's upstream repo, the package is often `yarnpkg` instead:)
+                    #   apt-cache policy yarnpkg
+                    #   apt-cache madison yarnpkg
+                    #
+                    # Ubuntu package index (pick your suite, e.g. jammy):
+                    #   https://packages.ubuntu.com/   (search for "yarn" / "yarnpkg")
+                    corepack enable
+                    corepack prepare yarn@1.22.22 --activate
+                    yarn --version
                 name: Install yarn
     restore-gems:
         description: |
